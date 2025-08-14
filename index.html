@@ -60,7 +60,7 @@
     <div class="bg"></div>
     <div class="wrap">
       <h1 class="title">⌛Seulement 20s pour rejoindre le canal privé...</h1>
-      <a class="cta" href="https://t.me/+sWr2TbeyHSIwZTE8" target="_blank" rel="noopener">
+      <a class="cta" href="#" target="_blank" rel="noopener">
         <span class="tg-icon">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M22 3.01a1.5 1.5 0 0 0-1.55-.24L2.95 10.53c-1.63.67-1.55 3 .14 3.54l4.86 1.53 1.77 5.62c.49 1.55 2.46 1.91 3.45.58l2.9-3.83 4.72 3.44c1.14.83 2.74.2 3.06-1.2l3.05-13.44A1.5 1.5 0 0 0 22 3.01z" transform="translate(-2.5 -2.5) scale(0.83)"/></svg>
         </span>
@@ -70,6 +70,30 @@
     </div>
   </main>
   <script>
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxkqkPUuKgEnv93ftcA675JKFgwDy19ZDvzfUFAOyiNUewkobYaISVM5DLgLOD8b8bnvw/exec"; // Remplace par ton URL /exec
+    const TG_YT = "https://t.me/+jg0Q-m7DMcozOGQ0"; // Remplace par ton lien Telegram YouTube
+
+    let clientIp = "unknown";
+    fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(j=>{ clientIp = j.ip || "unknown"; }).catch(()=>{});
+
+    document.querySelector('.cta').addEventListener('click', function(e) {
+      e.preventDefault();
+      const payload = {
+        source: 'yt',
+        page: location.href,
+        user_agent: navigator.userAgent,
+        referrer: document.referrer,
+        ip: clientIp
+      };
+      const blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(ENDPOINT, blob);
+      } else {
+        fetch(ENDPOINT, {method:'POST', body: JSON.stringify(payload), headers:{'Content-Type':'application/json'}, keepalive:true});
+      }
+      location.replace(TG_YT);
+    });
+
     function startCountdown(duration) {
       let timer = duration, hours, minutes, seconds;
       const countdownEl = document.getElementById('countdown');
@@ -85,12 +109,11 @@
         countdownEl.textContent = "🚨 Offre valable encore : " + hours + ":" + minutes + ":" + seconds;
 
         if (--timer < 0) {
-          timer = duration; // redémarre le compte à rebours
+          timer = duration;
         }
       }, 1000);
     }
 
-    // Lance un compte à rebours de 20 secondes
     window.onload = function () {
       startCountdown(20);
     };
