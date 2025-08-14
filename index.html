@@ -24,7 +24,7 @@
     }
     .bg{
       position:absolute;inset:0;
-      background:url("https://i.imgur.com/fbM6klW.jpg") center/cover no-repeat;
+      background:url("https://i.imgur.com/fbM6klW.jpg") center/contain no-repeat;
       z-index:0;
     }
     .wrap{position:absolute;inset:0;padding:18px;display:flex;flex-direction:column;gap:14px;z-index:1}
@@ -37,44 +37,6 @@
     .tg-icon{width:26px;height:26px;flex:0 0 26px;border-radius:50%;display:grid;place-items:center;background:var(--accent)}
     .cta-label{flex:1;text-align:center;font-size:15px}
   </style>
-  <script>
-    // --- Fond auto-résolu (gère les liens Imgur non directs) ---
-    // 1) Tu peux remplacer cette constante par TON lien Imgur "Share Link"
-    // 2) Ou passer ?bg=URL dans l'URL de la page pour le surcharger
-    const DEFAULT_BG = "https://imgur.com/fbM6klW"; // ton lien actuel
-    function setBg(url){
-      const el = document.getElementById('bg');
-      el.style.backgroundImage = `url('${url}')`;
-    }
-    function resolveBg(){
-      const params = new URLSearchParams(location.search);
-      const raw = (params.get('bg') || DEFAULT_BG || '').trim();
-      if(!raw){ return; }
-      // Si c'est un lien Imgur non direct, on fabrique des candidates .jpg/.jpeg/.png/.webp
-      const m = raw.match(/imgur\.com\/(?:a\/|gallery\/)?([A-Za-z0-9]+)/);
-      let candidates = [];
-      if(m){
-        const id = m[1];
-        ["jpg","jpeg","png","webp"].forEach(ext=>{
-          candidates.push(`https://i.imgur.com/${id}.${ext}`);
-        });
-      } else {
-        candidates = [raw];
-      }
-      // Essaie en cascade jusqu'à ce qu'une image charge
-      const img = new Image();
-      let i = 0;
-      const tryNext = ()=>{
-        if(i >= candidates.length){ return; }
-        const src = candidates[i++];
-        img.onload = ()=> setBg(src);
-        img.onerror = tryNext;
-        img.src = src;
-      };
-      tryNext();
-    }
-    window.addEventListener('DOMContentLoaded', resolveBg);
-  </script>
 </head>
 <body>
   <main class="phone">
