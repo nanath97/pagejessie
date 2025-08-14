@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Accès privé</title>
+<meta name="description" content="Accès direct au contenu privé.">
+<style>
+  :root { --bg:#0b0b0f; --fg:#eaeaf0; --mut:#a8acb9; --btn:#5ae28c; --btnh:#49c576; }
+  * { box-sizing:border-box } html,body{height:100%}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;background:var(--bg);color:var(--fg);display:flex;align-items:center;justify-content:center}
+  .wrap{width:min(720px,92vw);text-align:center;padding:32px 20px}
+  .card{border:1px solid #1f2230;border-radius:20px;padding:28px;background:linear-gradient(180deg,#121422,#0e101a);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  h1{margin:0 0 10px;font-size:clamp(24px,4.5vw,34px)} p{margin:0 0 18px;color:var(--mut)}
+  .hero{width:100%;aspect-ratio:16/9;border-radius:16px;object-fit:cover;display:block;margin:10px auto 18px}
+  .btn{display:inline-block;padding:16px 22px;border-radius:14px;background:var(--btn);color:#072612;font-weight:700;text-decoration:none;font-size:18px;transition:transform .08s ease,background .15s ease}
+  .btn:hover{background:var(--btnh);transform:translateY(-1px)}
+  .tiny{font-size:12px;color:#8d92a3;margin-top:12px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="card">
+    <h1>Accès privé</h1>
+    <p>Contenu flouté → clique pour ouvrir dans Telegram et débloquer.</p>
+    <img class="hero" src="preview.webp" alt="Aperçu flouté">
+    <a id="cta" class="btn" href="https://t.me/+sWr2TbeyHSIwZTE8?start=yt">Ouvrir dans Telegram</a>
+    <div class="tiny">Si l’app ne s’ouvre pas : cherche <strong>@TONBOT</strong> dans Telegram.</div>
+  </section>
+</main>
+<script>
+(function(){
+  var p=new URLSearchParams(location.search).toString();
+  var a=document.getElementById('cta');
+  var base='https://t.me/+sWr2TbeyHSIwZTE8?start=yt';
+  if(p) a.href=base+'_'+encodeURIComponent(p);
+}());
+</script>
+</body>
+</html>
