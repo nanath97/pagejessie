@@ -36,12 +36,11 @@
   </main>
 
   <script>
-    // ====== CONFIG (mets tes valeurs) ======
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxkqkPUuKgEnv93ftcA675JKFgwDy19ZDvzfUFAOyiNUewkobYaISVM5DLgLOD8b8bnvw/exec"; // URL /exec Apps Script
-    const TG_YT    = "https://bit.ly/jessie_prive"; // Lien Telegram YouTube
-    // =======================================
+    // ====== CONFIG ======
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxkqkPUuKgEnv93ftcA675JKFgwDy19ZDvzfUFAOyiNUewkobYaISVM5DLgLOD8b8bnvw/exec"; // ton /exec
+    const TG_YT    = "https://bit.ly/jessie_prive"; // Lien Bitly
+    // ====================
 
-    // Debug helper
     function log(){ try{ console.log.apply(console, arguments);}catch(_){} }
 
     // Précharge IP (best effort, non bloquant)
@@ -49,18 +48,21 @@
     try{
       fetch("https://api.ipify.org?format=json", {cache:'no-store'})
         .then(r=>r.json()).then(j=>{ clientIp = j && j.ip ? j.ip : "unknown"; log('[IP]', clientIp); })
-        .catch(err=>log('[IP ERR]', err));
-    }catch(err){ log('[IP EXC]', err); }
+        .catch(()=>{});
+    }catch(_){}
 
     // Attache le tracking + redirection
     document.addEventListener('DOMContentLoaded', () => {
       const cta = document.querySelector('a.cta');
       if(!cta) return;
-      cta.href = TG_YT; // lien de secours si JS désactivé
+      cta.href = TG_YT; // secours si JS désactivé
+
       cta.addEventListener('click', (e)=>{
         e.preventDefault();
+
+        // >>>>> ICI: log du clic vers Bitly dans Google Sheet
         const payload = {
-          source: 'yt',
+          source: 'yt_bitly',             // <-- pour reconnaître ces clics
           page: location.href,
           user_agent: navigator.userAgent || '',
           referrer: document.referrer || '',
@@ -76,15 +78,19 @@
             log('[sendBeacon]', sent);
           }
           if(!sent){
-            // Fallback ultra-rapide
-            fetch(ENDPOINT, {method:'POST', body: JSON.stringify(payload), headers:{'Content-Type':'application/json'}, keepalive:true, mode:'no-cors'})
-              .then(()=>log('[fetch keepalive] sent'))
-              .catch(err=>log('[fetch keepalive] err', err));
+            // Fallback rapide
+            fetch(ENDPOINT, {
+              method:'POST',
+              body: JSON.stringify(payload),
+              headers:{'Content-Type':'application/json'},
+              keepalive:true,
+              mode:'no-cors'
+            }).catch(()=>{});
           }
-        }catch(err){ log('[TRACK ERR]', err); }
+        }catch(_){}
 
-        // Petit délai pour laisser partir le beacon (fiable sur navigateurs in-app)
-        setTimeout(()=>{ location.replace(TG_YT); }, 160);
+        // Petit délai pour laisser partir le beacon
+        setTimeout(()=>{ location.replace(TG_YT); }, 180);
       });
     });
 
